@@ -1,7 +1,12 @@
 package com.example.listviewbaseadapter.model;
 
 
-public class FoodDetails {
+import android.os.Parcel;
+import android.os.Parcelable;
+
+import androidx.annotation.NonNull;
+
+public class FoodDetails implements Parcelable {
     private String foodName;
     private String foodDesc;
     private Integer foodImageId;
@@ -13,6 +18,28 @@ public class FoodDetails {
         this.foodDesc = foodDesc;
         this.foodImageId = foodImageId;
     }
+
+    protected FoodDetails(Parcel in) {
+        foodName = in.readString();
+        foodDesc = in.readString();
+        if (in.readByte() == 0) {
+            foodImageId = null;
+        } else {
+            foodImageId = in.readInt();
+        }
+    }
+
+    public static final Creator<FoodDetails> CREATOR = new Creator<FoodDetails>() {
+        @Override
+        public FoodDetails createFromParcel(Parcel in) {
+            return new FoodDetails(in);
+        }
+
+        @Override
+        public FoodDetails[] newArray(int size) {
+            return new FoodDetails[size];
+        }
+    };
 
     public String getFoodName() {
         return foodName;
@@ -36,5 +63,22 @@ public class FoodDetails {
 
     public void setFoodImageId(Integer foodImageId) {
         this.foodImageId = foodImageId;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(@NonNull Parcel dest, int flags) {
+        dest.writeString(foodName);
+        dest.writeString(foodDesc);
+        if (foodImageId == null) {
+            dest.writeByte((byte) 0);
+        } else {
+            dest.writeByte((byte) 1);
+            dest.writeInt(foodImageId);
+        }
     }
 }

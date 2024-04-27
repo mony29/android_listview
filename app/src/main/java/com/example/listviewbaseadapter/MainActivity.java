@@ -1,6 +1,10 @@
 package com.example.listviewbaseadapter;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 
 import androidx.activity.EdgeToEdge;
@@ -12,15 +16,18 @@ import androidx.core.view.WindowInsetsCompat;
 import com.example.listviewbaseadapter.adapter.FoodAdapter;
 import com.example.listviewbaseadapter.model.FoodDetails;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
-
     ListView listView;
-    private int[] imageIds = new int[] {R.drawable.food2, R.drawable.food2, R.drawable.food2};
-    private String[] foodNames = new String[] {"Mi Xian", "Ji Gong Bao", "Huo Guo"};
-    private String[] foodDesc = new String[] {"Mi XianMi XianJi Gong BaoMi Xian", "Ji Gong BaoMi XianJi Gong BaoMi Xian", "Huo GuoMi Xian"};
+    private int[] imageIds = new int[]{R.drawable.food1, R.drawable.food2, R.drawable.food3, R.drawable.food2};
+    private String[] foodNames = new String[]{"火锅糕点等中西美食", "大理美食", "重庆鸡公煲", "大理美食"};
+    private String[] foodDesc = new String[]{"重庆鸡公煲重庆鸡公煲重庆鸡公煲重庆鸡公煲",
+            "火锅糕点等中西美食火锅糕点等中西美食火锅糕点等中西美食 火锅糕点等中西美食",
+            "重庆鸡公煲重庆鸡公煲重庆鸡公煲重庆鸡公煲 火锅糕点等中西美食火锅糕点等中西美食火锅糕点等中西美食 火锅糕点等中西美食",
+            "重庆鸡公煲重庆鸡公煲重庆鸡"};
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,24 +39,31 @@ public class MainActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
-
         listView = findViewById(R.id.listview);
-
         //数据列表 List Data
         List<FoodDetails> foodDetailsList = new ArrayList<>();
-        for(int i=0; i<imageIds.length; i++){
+        for (int i = 0; i < imageIds.length; i++) {
             FoodDetails foodDetails = new FoodDetails();
             foodDetails.setFoodName(foodNames[i]);
             foodDetails.setFoodDesc(foodDesc[i]);
             foodDetails.setFoodImageId(imageIds[i]);
-
             foodDetailsList.add(foodDetails);
         }
-
         //创建适配器 Create an Adapter
         FoodAdapter adapter = new FoodAdapter(this, foodDetailsList);
-
         //绑定适配器 Binding Adapter
         listView.setAdapter(adapter);
+
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                // 获取点击位置的FoodDetails对象
+                FoodDetails foodDetails = foodDetailsList.get(position);
+                // 创建一个 Intent 来启动 FoodDetailActivity
+                Intent intent = new Intent(MainActivity.this, FoodDetailActivity.class);
+                intent.putExtra("foodDetails", (Parcelable) foodDetails);
+                startActivity(intent);
+            }
+        });
     }
 }
